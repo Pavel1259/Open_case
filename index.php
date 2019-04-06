@@ -4,7 +4,7 @@
 <title>Старт</title>
 </head>
 <body>
-<a href="client.php" target="_blank">Клиент</a>
+<a href="client.php" target="_blank">Клиентт</a>
 
 </body>
 
