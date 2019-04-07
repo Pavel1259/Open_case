@@ -87,20 +87,18 @@ function update_page(){
             dataType: "json",
             success: function(result) {
                 if (result){ 
-					jQuery('.rows tr').remove();
-                    jQuery('.rows').append(function(){
-						t = result;
+					jQuery('.show_case div').remove();
+                    jQuery('.show_case').append(function(){
 						console.log(result);
-						var res = '<tr><td><b>Кейсы</b></td></tr>';
-						res += '<tr>';
+						var res = '';
 						for(var i = 0; i < result.users['name'].length; i++){
-							
-								res += "<td><a href='#' onClick='select_id_case="+result.users["id"][i]+";select_case();'>"+ result.users["name"][i] + " "+ result.users['price'][i] +"</a></td>";
+							console.log("123");
+								res += "<div style='float:left; width:100px; margin-left:10px;'>";
+								res += "<a href='#' onClick='select_id_case="+result.users["id"][i]+";select_case();'>";
+								res += "<img src='"+result.users["img"][i]+"' width='100px' />"+ result.users["name"][i] + " "+ result.users['price'][i] +"</a></div>";
 								//res+="<td><span style='margin-left:100px;'></span><a href='#' onClick=\"select_database='"+ result.users['TABLE_NAME'][i].Database +"'; delete_database();\">Удалить</a></td>";
 								//res += '<tr><td>' + result.users[id] + '</td><td>' + result.users.name[i] + '</td><td>' + result.users.surname[i] + '</td><td>' + result.users.age[i] + '</td></tr>';
 						}
-						res += '</tr>';
-						t = res;
 							return res;
 					});
 					console.log(result);
@@ -124,10 +122,11 @@ function select_case(){
                     jQuery('.banner').append(function(){
 						t = result;
 						console.log(result);
-						var res = '<div style="position: fixed; left:10%; top:300px; heigth:500px; width:80%; background-color:gray;" class="block_fixed">';
+						var res = '<div style="position: absolute; left:10%; top:300px; heigth:500px; width:80%; background-color:gray;" class="block_fixed">';
 						res += '<input type="button" name="close_banner_1" value="Закрыть" onClick="close_banner_1();"';
 						res += '<div><h2 align="center">'+result.users["name"][0]+'</h2>';
-						res += '<div style="position:absolute; left:50%; margin-left:-55px;"><span style="margin-right:20px;">'+result.users["price"][0]+'</span><input type="button" name="open_case_button" value="Открыть" onClick="var select_id_case ='+select_id_case+';open_case_function();"></div>';
+						res += '<img src="'+result.users["img"][0]+'" width="20%" style="margin:0 40% 0 40%;" />';
+						res += '<div style="position:absolute; left:50%; margin-left:-55px;"><span style="margin-right:20px; margin-bottom:20px;">'+result.users["price"][0]+' ед. </span><input type="button" name="open_case_button" value="Открыть" onClick="var select_id_case ='+select_id_case+';open_case_function();"></div>';
 						
 						return res;
 					});
@@ -150,7 +149,7 @@ function select_case(){
 						t = result;
 						console.log(result);
 						var res = '';
-						res += '<div style="clear:both;">';
+						res += '<div style="clear:both; margin-top:40px;">';
 						for(var i = 0; i<result.users["name"].length;i++)
 						{
 							res += '<div style="width:100px;float:left; margin-left:10px;">';
@@ -227,7 +226,7 @@ function sell_skin_function(){
 <table>
 <tr>
 	<td>
-		<div >
+		<div>
 			<p href="index.php" class="status_person_name">Пользователь:</p><a href="index.php">Выйти</a>
 			<p class="status_person_currency">Баланс:</p>
 		</div>
@@ -236,26 +235,23 @@ function sell_skin_function(){
 			<p><a href="#" onClick="$('.status_person_inventory').css('display','none');">Закрыть</a></p>
 		</div>
 		<div id="status"></div>
-		<div><p>qwertyuiopaaaaaaaaaasdfghjklasdadadqfvf</p></div>
+		
+		
+	</td>
+	<td>
+		<div class="show_case" style="position:absolute; left:10%; top:175px; rigth:150px; width:80%; background-color:№cccccc; z-index:2;">
+			
+		</div>
 	</td>
 </tr>
 </table>
 
 <div class="banner">
-	<!--<div style="position: relative; left:10px; heigth:500px; width:500px; background-color:red;">
-	<p>1</p>
-	</div>
-	<div style="position: absolute; left:10px; heigth:500px; width:500px; background-color:red;">
-	<p>1</p>
-	</div>-->
-	<!--<div style="position: fixed; left:100px; top:300px; heigth:500px; width:1000px; background-color:gray;">
-	<p>1</p>-->
 	</div>
 </div>
 <script>
 window.onload = function(){
 	//var socket = new WebSocket("ws://echo.websocket.org");
-	//const new_name_user;
 	
 	// достаем данные пользователя 
 	var split_url = decodeURIComponent(location.search.substr(1)).split('?');
@@ -263,8 +259,6 @@ window.onload = function(){
 	new_name_user = split_result[0];
 	new_password_user = split_result[1];
 	
-	//console.log(new_name_user);
-	//console.log(new_password_user);
 	// проверяем
 	socket = new WebSocket("ws://localhost:8080");
 	var status = document.querySelector("#status");
@@ -308,27 +302,6 @@ window.onload = function(){
 		}
 		else if(message.output == 4){ // кейс открыт
 			// сделать анимацию прокрутки
-			/*jQuery.ajax({
-            url: "for_db.php",
-            type: "POST",
-            data: {mode:4, parametr: message.id_skins}, // Передаем данные для записи
-            dataType: "json",
-            success: function(result) {
-                if (result){ 
-                    jQuery('.banner').append(function(){
-						var res = '<div class="get_skin" style="position: fixed; left:150px; top:150px; heigth:500px; width:1000px; background-color:#2196F3;;" class="block_fixed">';
-						res += '<img src="'+result.users["img"][0]+'" width="600px" />';
-						res += '<a href="#" style="position:fixed; left:700px; top:155px;" onClick="close_banner_get_skin();">Закрыть</div>';
-						res += '</div>';
-						return res;
-					});
-					console.log(result);
-                }else{
-                    alert(result.message);
-                }
-				return false;
-            }
-			}); */
 			// закрыть анимацию и вызвать через функцию то что ниже
 			jQuery.ajax({
             url: "for_db.php",

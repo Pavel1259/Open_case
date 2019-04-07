@@ -15,8 +15,8 @@ $name = 'SELECT * FROM base_data.person';
 //$name = $_GET['name'];
 /** Если нам передали ID то обновляем */
 $mode = trim($_POST['mode']);
-//$parametr = "adcbdef,123";
-//$mode = 6;
+//$parametr = "qwerty,123";
+//$mode = 5;
 if($mode or $parametr){
 	//вставляем запись в БД
 	//$query = $mysqli->query("INSERT INTO `users` VALUES(NULL, '$name', '$surname', '$age')");
