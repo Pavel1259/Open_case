@@ -15,8 +15,8 @@ $name = 'SELECT * FROM base_data.person';
 //$name = $_GET['name'];
 /** Если нам передали ID то обновляем */
 $mode = trim($_POST['mode']);
-//$parametr = "1";
-//$mode = 2;
+//$parametr = "qwerty,123";
+//$mode = 5;
 if($mode or $parametr){
 	//вставляем запись в БД
 	//$query = $mysqli->query("INSERT INTO `users` VALUES(NULL, '$name', '$surname', '$age')");
@@ -83,30 +83,70 @@ if($mode or $parametr){
 	}
 	else if($mode == 5){ // проверить стстояние счета и инвентаря
 		$arr = explode(',',$parametr);
-		$stmt = mysqli_stmt_init($link);
-		mysqli_stmt_prepare($stmt,'SELECT name,password,currency,inventory FROM person WHERE name = ? and password = ?');// подготавливает запрос
-		$bools = mysqli_stmt_bind_param($stmt, 'ss', $arr[0], $arr[1]); // связывает параметры с запросом
-		mysqli_stmt_execute($stmt); // выполняет запрос
-		mysqli_stmt_store_result($stmt); // сохранияет запрос
+		//$stmt = mysqli_stmt_init($link);
+		$stmt = $mysqli->prepare('SELECT name,password,currency,inventory FROM person WHERE name = ? and password = ?');// подготавливает запрос
+		$stmt->bind_param('ss', $arr[0], $arr[1]); // связывает параметры с запросом
+		$stmt->execute(); // выполняет запрос
+		$stmt->store_result(); // сохранияет запрос
 		
-		if(mysqli_stmt_num_rows($stmt) == 0)
+		if($stmt->num_rows == 0)
 		{
 			//echo sprintf('\n1234'."\n");
-			$errors = "Такого пользователя не существует!";
+			$errors = "Ошибка! Такого пользователя не существует!";
+			$code_error = 1;
 			//$msgs[message] = 'Пользователя с такими данными не существует!';
 			//$from->send($msgs);
 			//echo sprintf('\n123411111'."\n");
 		}
 		else{
-			mysqli_stmt_bind_result($stmt,$r_name,$r_password,$r_currency,$r_inventory);
+			$stmt->bind_result($r_name,$r_password,$r_currency,$r_inventory);
 			while(mysqli_stmt_fetch($stmt)){
 				$p_name = $r_name;
 				$p_currency = $r_currency;
 				$p_inventory = $r_inventory;
 			}
-			$users[inventory][] = explode(',',$p_inventory);
+			$users[name_person][] = $p_name;
+			$inventory_id = explode(',',$p_inventory);
 			$users[currency][] = $p_currency;
+			mysqli_stmt_close($stmt);
+			for($i = 0;$i < count($inventory_id);$i++)
+			{
+				$res = $mysqli->query("SELECT id,name,price,img FROM predmety WHERE id = ".$inventory_id[$i]);
+				while ($row = $res->fetch_assoc()) {
+					$users[inventory_id][] = $row["id"];
+					$users[inventory_name][] = $row["name"];
+					$users[inventory_price][] = $row["price"];
+					$users[inventory_img][] = $row["img"];
+				}
+			}
+			 
+			
 		}	
+	}
+	else if($mode == 6){ // авторизация
+		$arr = explode(',',$parametr);
+		//$stmt = mysqli_stmt_init($link);
+		$stmt = $mysqli->prepare('SELECT name FROM person WHERE name = ?');// подготавливает запрос
+		$stmt->bind_param('s', $arr[0]); // связывает параметры с запросом
+		$stmt->execute(); // выполняет запрос
+		$stmt->store_result(); // сохранияет запрос
+		
+		if($stmt->num_rows == 0)
+		{
+			mysqli_stmt_close($stmt);
+			$stmt = $mysqli->prepare('INSERT INTO person(name,password,currency)VALUES(?,?,?)');// подготавливает запрос
+			$stmt->bind_param('ssd', $arr[0],$arr[1],500); // связывает параметры с запросом
+			$stmt->execute();
+			$message = 'Пользователь успешно создан!';
+			//$msgs[message] = 'Пользователя с такими данными не существует!';
+			//$from->send($msgs);
+			//echo sprintf('\n123411111'."\n");
+		}
+		else{
+			mysqli_stmt_close($stmt);
+			$errors = "Пользователь с таким именем уже существует!";
+		
+		}
 	}
 	
 	
@@ -230,7 +270,7 @@ $out = array(
 	'message' => $message,
 	'users' => $users,
 	'errors' => $errors,
-	'str_zapros' => $name
+	'code_error' => $code_error
 );
 
 // Устанавливаем заголовот ответа в формате json

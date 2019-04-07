@@ -19,6 +19,11 @@ class Chat implements MessageComponentInterface {
 		mysqli_select_db($link,$db_database) or die("Нет соединения с БД".mysql_error());
 		mysqli_set_charset($link,"utf8");*/
 	}
+	
+	public function str_replace_once($search, $replace, $text){ // удаление первого вхождения
+		$pos = strpos($text, $search); 
+		return $pos!==false ? substr_replace($text, $replace, $pos, strlen($search)) : $text; 
+	} 
 // id name 
 // id, name, password, money, predmety, 
     public function onOpen(ConnectionInterface $conn) {
@@ -110,7 +115,7 @@ class Chat implements MessageComponentInterface {
 					}
 					else
 					{
-						$msgs[output] = 4;
+						$msgs[output] = 4; // кейс открыт
 						$msgs[message] = $r_currency;
 						$arr_table_id_skins = explode(',',$p_table_id_skins);
 						$msgs[id_skins] = $arr_table_id_skins[rand(0,count($arr_table_id_skins)-1)];
@@ -124,9 +129,60 @@ class Chat implements MessageComponentInterface {
 					}
 					
 				}	
-			}else if($msgs[mode] == "sell")
-			{
-				// продать товар
+			}else if($msgs[mode] == "sell"){ // продать товар
+				// вначале найдем skin в общей базе
+				$stmt2 = mysqli_stmt_init($link);
+				mysqli_stmt_prepare($stmt2,'SELECT price FROM predmety WHERE id = ?'); 
+				mysqli_stmt_bind_param($stmt2, 's', $msgs[select_id_skin]);
+				mysqli_stmt_execute($stmt2);
+				mysqli_stmt_store_result($stmt2);
+				if(mysqli_stmt_num_rows($stmt2) == 0)
+				{
+					//$msgs[message] = 'Такого кейса не существует';
+					$msgs[output] = 6;
+					$msgs[message] = 'Такого товара у вас нет!';
+					mysqli_stmt_close($stmt2);
+				}else{
+					mysqli_stmt_bind_result($stmt2,$r_price_skin_id);
+					$price_select_case = 0;
+					while(mysqli_stmt_fetch($stmt2)){
+						$p_price_skin_id = $r_price_skin_id;
+					}
+					mysqli_stmt_close($stmt2);
+					// теперь проверим, есть ли он у пользователя
+					//$msgs[message] = gettype($msgs[select_id_skin]);
+					//$y = $msgs[select_id_skin];
+					if(stristr($p_inventory,(string)$msgs[select_id_skin])){
+						// теперь удалим нужный id из инвентаря пользователя и добавим его стоимость в счет пользователя
+						if(stristr($p_inventory,$msgs[select_id_skin].',')){
+							$param1 = $msgs[select_id_skin].',';
+							$p_inventory = $this->str_replace_once($param1,'',$p_inventory);
+						}
+						else if(stristr($p_inventory,','.$msgs[select_id_skin]))
+						{
+							$param1 = ','.$msgs[select_id_skin];
+							$p_inventory = $this->str_replace_once($param1,'',$p_inventory);
+						}
+						else
+						{
+							$param1 = (string)$msgs[select_id_skin];
+							$p_inventory = $this->str_replace_once($param1,'',$p_inventory);
+						}
+						$p_currency = $p_currency + $p_price_skin_id;
+						$stmt2 = mysqli_stmt_init($link);
+						mysqli_stmt_prepare($stmt2,'UPDATE person SET currency = ? , inventory = ? WHERE name = ? AND password = ?'); 
+						mysqli_stmt_bind_param($stmt2, 'dsss', $p_currency,$p_inventory,$p_name,$p_password);
+						mysqli_stmt_execute($stmt2);
+						mysqli_stmt_close($stmt2);
+						$msgs[output] = 5;
+						$msgs[message] = 'Скин продан';
+					}else{
+						$msgs[output] = 6;
+						$msgs[message] = 'Такого товара у вас нет!!!';
+						
+					}
+	
+				}
 			}else
 			{
 				// отправить состояние счета и какие товары есть
