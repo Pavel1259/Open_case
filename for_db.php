@@ -15,8 +15,8 @@ $name = 'SELECT * FROM base_data.person';
 //$name = $_GET['name'];
 /** Если нам передали ID то обновляем */
 $mode = trim($_POST['mode']);
-//$parametr = "qwerty,123";
-//$mode = 5;
+//$parametr = "adcbdef,123";
+//$mode = 6;
 if($mode or $parametr){
 	//вставляем запись в БД
 	//$query = $mysqli->query("INSERT INTO `users` VALUES(NULL, '$name', '$surname', '$age')");
@@ -91,12 +91,10 @@ if($mode or $parametr){
 		
 		if($stmt->num_rows == 0)
 		{
-			//echo sprintf('\n1234'."\n");
 			$errors = "Ошибка! Такого пользователя не существует!";
 			$code_error = 1;
 			//$msgs[message] = 'Пользователя с такими данными не существует!';
 			//$from->send($msgs);
-			//echo sprintf('\n123411111'."\n");
 		}
 		else{
 			$stmt->bind_result($r_name,$r_password,$r_currency,$r_inventory);
@@ -134,13 +132,36 @@ if($mode or $parametr){
 		if($stmt->num_rows == 0)
 		{
 			mysqli_stmt_close($stmt);
-			$stmt = $mysqli->prepare('INSERT INTO person(name,password,currency)VALUES(?,?,?)');// подготавливает запрос
-			$stmt->bind_param('ssd', $arr[0],$arr[1],500); // связывает параметры с запросом
-			$stmt->execute();
-			$message = 'Пользователь успешно создан!';
-			//$msgs[message] = 'Пользователя с такими данными не существует!';
-			//$from->send($msgs);
-			//echo sprintf('\n123411111'."\n");
+			// проверка на запрещенные символы
+			$arr_symbol = array(',','.','<','>','?','&','*','!','&');
+			$bool_prohibited_symbols = false;
+			for($i = 0;$i<count($arr);$i++)
+			{
+				for($j = 0;$j < count($arr_symbol); $j++)
+				{
+					if(stristr($arr[$i],$array_s[$j]))
+					{
+						$bool_prohibited_symbols = true;
+					}
+				}
+			}
+			if($bool_prohibited_symbols)
+			{
+				$message = 'Данные пользователя имеют запрещенные символы';
+				$code_error = 2;
+			}
+			else
+			{
+				$start_balanse = 500;
+				$stmt = $mysqli->prepare('INSERT INTO person(name,password,currency)VALUES(?,?,?)');// подготавливает запрос
+				$stmt->bind_param('ssd', $arr[0],$arr[1],$start_balanse); // связывает параметры с запросом
+				$stmt->execute();
+				$message = 'Пользователь успешно создан!';
+				$code_error = 3;
+				
+				//$msgs[message] = 'Пользователя с такими данными не существует!';
+				//$from->send($msgs);
+			}
 		}
 		else{
 			mysqli_stmt_close($stmt);
