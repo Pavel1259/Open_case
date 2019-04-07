@@ -57,7 +57,7 @@ function update_info_person()
 						document.querySelector(".status_person_currency").textContent ="Балланс: " + result.users['currency'][0];
 						jQuery('.status_person_inventory div').remove();
 						jQuery('.status_person_inventory').append(function(){
-							var res = '';
+							var res = '<div style="position:absolute; background-color:gray;">';
 							for(var i = 0; i < result.users['inventory_id'].length; i++){
 								res += "<div style='width:100px; float:left; margin-left:10px;'><img src='"+result.users["inventory_img"][i]+"' width='100px' />";
 								res += "<a href='#' onClick='select_id_skin="+result.users["inventory_id"][i]+";sell_skin_function();'>";
@@ -65,7 +65,7 @@ function update_info_person()
 								//res+="<td><span style='margin-left:100px;'></span><a href='#' onClick=\"select_database='"+ result.users['TABLE_NAME'][i].Database +"'; delete_database();\">Удалить</a></td>";
 								//res += '<tr><td>' + result.users[id] + '</td><td>' + result.users.name[i] + '</td><td>' + result.users.surname[i] + '</td><td>' + result.users.age[i] + '</td></tr>';
 							}
-							res+="<div style='clear:both;'></div>";
+							res+="<div style='clear:both;'></div></div>";
 							return res;
 						});
 						console.log(result);
@@ -232,13 +232,13 @@ function sell_skin_function(){
 			<p class="status_person_currency">Баланс:</p>
 		</div>
 		<p><a href="#" onClick="close_banner_1();$('.status_person_inventory').css('display','block');">Инвентарь:</a></p>
-		<div class="status_person_inventory" style="display:none; position:fixed; left:10%; top:175px; rigth:150px; width:80%; z-index:3; background-color:№cccccc;">
+		<div class="status_person_inventory" style="display:none; position:absolute; left:10%; top:175px; rigth:150px; width:80%; background-color:№cccccc; z-index:3;">
 			<p><a href="#" onClick="$('.status_person_inventory').css('display','none');">Закрыть</a></p>
 		</div>
 		<div id="status"></div>
+		<div><p>qwertyuiopaaaaaaaaaasdfghjklasdadadqfvf</p></div>
 	</td>
 </tr>
-
 </table>
 
 <div class="banner">
