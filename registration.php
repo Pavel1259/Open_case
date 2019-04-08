@@ -5,7 +5,7 @@
 <script src="jquery-1.7.2.min.js"></script>
 <script type="text/JavaScript">
 	
-	var prohibited_symbols = [',','.','<','>','?','&','*','!','&'];
+	var prohibited_symbols = [',','.','<','>','?','&','*','!','`','"','\'','$',';'];
 	var bool_prohibited_symbols_user = false;
 	var bool_prohibited_symbols_password = false;
 	var bool_prohibited_symbols_prohibited = false;

@@ -57,7 +57,7 @@ function update_info_person()
 						document.querySelector(".status_person_currency").textContent ="Балланс: " + result.users['currency'][0];
 						jQuery('.status_person_inventory div').remove();
 						jQuery('.status_person_inventory').append(function(){
-							var res = '<div style="position:absolute; background-color:gray;">';
+							var res = '<div style="position:absolute; background-image: url(img/background/background-6.jpg);">';
 							for(var i = 0; i < result.users['inventory_id'].length; i++){
 								res += "<div style='width:100px; float:left; margin-left:10px;'><img src='"+result.users["inventory_img"][i]+"' width='100px' />";
 								res += "<a href='#' onClick='select_id_skin="+result.users["inventory_id"][i]+";sell_skin_function();'>";
@@ -122,7 +122,7 @@ function select_case(){
                     jQuery('.banner').append(function(){
 						t = result;
 						console.log(result);
-						var res = '<div style="position: absolute; left:10%; top:300px; heigth:500px; width:80%; background-color:gray;" class="block_fixed">';
+						var res = '<div style="position: absolute; left:10%; top:100px; heigth:500px; width:80%; background-image: url(img/background/background-6.jpg); z-index:2;" class="block_fixed">';
 						res += '<input type="button" name="close_banner_1" value="Закрыть" onClick="close_banner_1();"';
 						res += '<div><h2 align="center">'+result.users["name"][0]+'</h2>';
 						res += '<img src="'+result.users["img"][0]+'" width="20%" style="margin:0 40% 0 40%;" />';
@@ -154,7 +154,7 @@ function select_case(){
 						{
 							res += '<div style="width:100px;float:left; margin-left:10px;">';
 							res += '<img src="'+result.users["img"][i]+'" width="100px"/>';
-							res += '<h3>'+result.users["name"][i]+'</h3></div>';
+							res += '<h3 style="height:75px;">'+result.users["name"][i]+'</h3></div>';
 						}
 						
 						res += '</div>';
@@ -231,22 +231,22 @@ function sell_skin_function(){
 			<p class="status_person_currency">Баланс:</p>
 		</div>
 		<p><a href="#" onClick="close_banner_1();$('.status_person_inventory').css('display','block');">Инвентарь:</a></p>
-		<div class="status_person_inventory" style="display:none; position:absolute; left:10%; top:175px; rigth:150px; width:80%; background-color:№cccccc; z-index:3;">
-			<p><a href="#" onClick="$('.status_person_inventory').css('display','none');">Закрыть</a></p>
+		<div class="status_person_inventory" style="display:none; position:absolute; left:10%; top:100px; rigth:150px; width:80%; background-image: url(img/background/background-6.jpg); z-index:3;">
+			<p style="background-image: url(img/background/background-6.jpg);"><input type="submit" value="Закрыть" onClick="$('.status_person_inventory').css('display','none');" ></p>
 		</div>
 		<div id="status"></div>
 		
 		
 	</td>
 	<td>
-		<div class="show_case" style="position:absolute; left:10%; top:175px; rigth:150px; width:80%; background-color:№cccccc; z-index:2;">
+		<div class="show_case" style="position:absolute; left:10%; top:175px; rigth:150px; width:80%; background-color:№cccccc; z-index:1;">
 			
 		</div>
 	</td>
 </tr>
 </table>
 
-<div class="banner">
+<div class="banner" style="z-index:2;">
 	</div>
 </div>
 <script>
@@ -309,11 +309,12 @@ window.onload = function(){
             data: {mode:4, parametr: message.id_skins}, // Передаем данные для записи
             dataType: "json",
             success: function(result) {
-                if (result){ 
+                if (result){  
                     jQuery('.banner').append(function(){
-						var res = '<div class="get_skin" style="position: fixed; left:150px; top:150px; heigth:500px; width:1000px; background-color:#2196F3;;" class="block_fixed">';
-						res += '<img src="'+result.users["img"][0]+'" width="600px" />';
-						res += '<a href="#" style="position:fixed; left:700px; top:155px;" onClick="close_banner_get_skin();">Закрыть</div>';
+						var res = '<div class="get_skin" style="position: fixed; left:150px; top:150px; heigth:500px; width:1000px; background-image:url(img/background/background-2.jpg); z-index:4;" class="block_fixed">';
+						res += '<img src="'+result.users["img"][0]+'" width="50%" style="margin:0 25% 0 25%;"/>';
+						res += '<p style="color:white; text-align:center;">'+result.users["name"][0]+'</p>'
+						res += '<input type="submit" value="Закрыть" style="position:absolute; right:0px; top:10px;" onClick="close_banner_get_skin();"></div>';
 						res += '</div>';
 						return res;
 					});

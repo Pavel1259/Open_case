@@ -45,17 +45,12 @@ class Chat implements MessageComponentInterface {
         echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
             , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
 		$msgs = json_decode($msg,true);
-		
+		// ? отдельный настроечный файл в отдельном каталоге
 		$db_database = 'web_technology';
 		$link = mysqli_connect('localhost','pasha','643105');
 		mysqli_select_db($link,$db_database);
-		mysqli_select_db($link,$db_database) or die("Нет соединения с БД".mysql_error());
+		mysqli_select_db($link,$db_database) or die("Нет соединения с БД".mysql_error()); // ? возвращать заголовок http об ошибке 501
 		mysqli_set_charset($link,"utf8");
-		
-		/*$link2 = mysqli_connect('localhost','pasha','643105');
-		mysqli_select_db($link2,$db_database);
-		mysqli_select_db($link2,$db_database) or die("Нет соединения с БД".mysql_error());
-		mysqli_set_charset($link2,"utf8");*/
 		// проверить, есть ли такой пользователь
 		
 		$stmt = mysqli_stmt_init($link);
@@ -66,16 +61,14 @@ class Chat implements MessageComponentInterface {
 		
 		if(mysqli_stmt_num_rows($stmt) == 0)
 		{
-			//echo sprintf('\n1234'."\n");
 			$msgs[output] = 1;
 			//$msgs[message] = 'Пользователя с такими данными не существует!';
 			//$from->send($msgs);
-			//echo sprintf('\n123411111'."\n");
 		}
 		else
 		{
 			mysqli_stmt_bind_result($stmt,$r_name,$r_password,$r_currency,$r_inventory); // запоминаем данные о пользователе
-			while(mysqli_stmt_fetch($stmt)){
+			while(mysqli_stmt_fetch($stmt)){ // ? 1000000 сторк (n) // поджинатор (sllect linit)
 				$p_name = $r_name;
 				$p_password = $r_password;
 				$p_currency = $r_currency;
