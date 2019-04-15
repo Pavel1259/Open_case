@@ -68,11 +68,13 @@ class Chat implements MessageComponentInterface {
 		else
 		{
 			mysqli_stmt_bind_result($stmt,$r_name,$r_password,$r_currency,$r_inventory); // запоминаем данные о пользователе
-			while(mysqli_stmt_fetch($stmt)){ // ? 1000000 сторк (n) // поджинатор (sllect linit)
+			$n = 0;
+			while(mysqli_stmt_fetch($stmt) && $n < 1){ // ? 1000000 сторк (n) // поджинатор (sllect linit)
 				$p_name = $r_name;
 				$p_password = $r_password;
 				$p_currency = $r_currency;
 				$p_inventory = $r_inventory;
+				$n++;
 			}
 			$msgs[message] = $p_name;
 			mysqli_stmt_close($stmt); // Завершить запрос 
