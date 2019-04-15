@@ -142,8 +142,6 @@
 <body>
 <a href="index.php">Назад</a>
 <div style="position:absolute; left:50%; margin-left:-120px; top:150px; ">
-																			
-	<!--<p>Username:<input type="text" size="20" onkeypress="user_value_kode = getChar(event); position = 'username'; compare_key();"></p>-->
 	<p>Username:<input type="text" size="20" onchange="compare_key('username');" class="user_textbox"><i class="text_prohibited_symbols_username"></i></p>
 	<p>Password:<input type="password" size="20" onchange="compare_key('password');" class="password_textbox"><i class="text_symbols_password"></p>
 	<p>Repeat password: <input type="password" size="20" class="repeat_textbox" onchange="compare_key('repeat');"><i class="text_prohibited_symbols_password"></p>

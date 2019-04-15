@@ -12,29 +12,18 @@ class Chat implements MessageComponentInterface {
 	
     public function __construct() {
         $this->clients = new \SplObjectStorage; // хранилище с клиентами
-
-		/*$db_database = 'web_technology'; 
-		$link = mysqli_connect('localhost','pasha','643105');
-		mysqli_select_db($link,$db_database);
-		mysqli_select_db($link,$db_database) or die("Нет соединения с БД".mysql_error());
-		mysqli_set_charset($link,"utf8");*/
 	}
 	
 	public function str_replace_once($search, $replace, $text){ // удаление первого вхождения
 		$pos = strpos($text, $search); 
 		return $pos!==false ? substr_replace($text, $replace, $pos, strlen($search)) : $text; 
 	} 
-// id name 
-// id, name, password, money, predmety, 
     public function onOpen(ConnectionInterface $conn) {
         // Store the new connection to send messages to later
 		// на открытие соединения мы приартачиваем каждый раз клиента 
         $this->clients->attach($conn);
 		// и пишем что создано новое соединение
         echo "New connection! ({$conn->resourceId})\n";
-		
-		// получить данные из ссылки websoket-а
-		//$array_person[$conn->resourceId] = $name_person;
     }
 	
 
@@ -45,7 +34,7 @@ class Chat implements MessageComponentInterface {
         echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
             , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
 		$msgs = json_decode($msg,true);
-		// ? отдельный настроечный файл в отдельном каталоге
+		// ? отдельный настроичный файл в отдельном каталоге
 		$db_database = 'web_technology';
 		$link = mysqli_connect('localhost','pasha','643105');
 		mysqli_select_db($link,$db_database);
@@ -54,7 +43,7 @@ class Chat implements MessageComponentInterface {
 		// проверить, есть ли такой пользователь
 		
 		$stmt = mysqli_stmt_init($link);
-		mysqli_stmt_prepare($stmt,'SELECT name,password,currency,inventory FROM person WHERE name = ? and password = ?');// подготавливает запрос
+		mysqli_stmt_prepare($stmt,'SELECT name,password,currency,inventory FROM person WHERE name = ? and password = ? LIMIT 1');// подготавливает запрос
 		$bools = mysqli_stmt_bind_param($stmt, 'ss', $msgs[username], $msgs[password]); // связывает параметры с запросом
 		mysqli_stmt_execute($stmt); // выполняет запрос
 		mysqli_stmt_store_result($stmt); // сохранияет запрос
@@ -63,13 +52,12 @@ class Chat implements MessageComponentInterface {
 		{
 			$msgs[output] = 1;
 			//$msgs[message] = 'Пользователя с такими данными не существует!';
-			//$from->send($msgs);
 		}
 		else
 		{
 			mysqli_stmt_bind_result($stmt,$r_name,$r_password,$r_currency,$r_inventory); // запоминаем данные о пользователе
 			$n = 0;
-			while(mysqli_stmt_fetch($stmt) && $n < 1){ // ? 1000000 сторк (n) // поджинатор (sllect linit)
+			while(mysqli_stmt_fetch($stmt) && $n < 1){
 				$p_name = $r_name;
 				$p_password = $r_password;
 				$p_currency = $r_currency;
@@ -97,12 +85,8 @@ class Chat implements MessageComponentInterface {
 						$price_select_case = $r_price;
 						$p_table_id_skins = $r_table_id_skins;
 					}
-					mysqli_stmt_close($stmt2);
-					//echo sprintf('12345');
-					//$result = mysqli_stmt_get_result($request);
-					//$row = mysqli_fetch_array($result, MYSQLI_NUM);
-					
-					
+					mysqli_stmt_close($stmt2);;
+									
 					if($p_currency < $price_select_case)
 					{
 						$msgs[output] = 2;
@@ -145,8 +129,6 @@ class Chat implements MessageComponentInterface {
 					}
 					mysqli_stmt_close($stmt2);
 					// теперь проверим, есть ли он у пользователя
-					//$msgs[message] = gettype($msgs[select_id_skin]);
-					//$y = $msgs[select_id_skin];
 					if(stristr($p_inventory,(string)$msgs[select_id_skin])){
 						// теперь удалим нужный id из инвентаря пользователя и добавим его стоимость в счет пользователя
 						if(stristr($p_inventory,$msgs[select_id_skin].',')){
@@ -176,19 +158,9 @@ class Chat implements MessageComponentInterface {
 						$msgs[message] = 'Такого товара у вас нет!!!';
 						
 					}
-	
 				}
-			}else
-			{
-				// отправить состояние счета и какие товары есть
 			}
-			//mysgli_fetch_array($request);
 		}
-		//$msgs[username] = "qwerttttty123";
-		//echo sprintf('Person:%s'."\n",$msgs[username]);
-		// проверить, хватает ли у пользователя на кейс. Если нет, то в output вернуть сигнал 1
-		
-		// если все ок то в output вернуть сигнал 0
         foreach ($this->clients as $client) {
 			// отправка сообщения всем, кроме отправителя
             if ($from == $client) {

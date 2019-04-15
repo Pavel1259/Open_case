@@ -62,8 +62,6 @@ function update_info_person()
 								res += "<div style='width:100px; float:left; margin-left:10px;'><img src='"+result.users["inventory_img"][i]+"' width='100px' />";
 								res += "<a href='#' onClick='select_id_skin="+result.users["inventory_id"][i]+";sell_skin_function();'>";
 								res += "<p style='height:70px;'>" + result.users["inventory_name"][i] + "</p><p>Цена: "+ result.users['inventory_price'][i] +"</p></a></div>";
-								//res+="<td><span style='margin-left:100px;'></span><a href='#' onClick=\"select_database='"+ result.users['TABLE_NAME'][i].Database +"'; delete_database();\">Удалить</a></td>";
-								//res += '<tr><td>' + result.users[id] + '</td><td>' + result.users.name[i] + '</td><td>' + result.users.surname[i] + '</td><td>' + result.users.age[i] + '</td></tr>';
 							}
 							res+="<div style='clear:both;'></div></div>";
 							return res;
@@ -96,8 +94,6 @@ function update_page(){
 								res += "<div style='float:left; width:100px; margin-left:10px;'>";
 								res += "<a href='#' onClick='select_id_case="+result.users["id"][i]+";select_case();'>";
 								res += "<img src='"+result.users["img"][i]+"' width='100px' />"+ result.users["name"][i] + " "+ result.users['price'][i] +"</a></div>";
-								//res+="<td><span style='margin-left:100px;'></span><a href='#' onClick=\"select_database='"+ result.users['TABLE_NAME'][i].Database +"'; delete_database();\">Удалить</a></td>";
-								//res += '<tr><td>' + result.users[id] + '</td><td>' + result.users.name[i] + '</td><td>' + result.users.surname[i] + '</td><td>' + result.users.age[i] + '</td></tr>';
 						}
 							return res;
 					});
@@ -127,7 +123,6 @@ function select_case(){
 						res += '<div><h2 align="center">'+result.users["name"][0]+'</h2>';
 						res += '<img src="'+result.users["img"][0]+'" width="20%" style="margin:0 40% 0 40%;" />';
 						res += '<div style="position:absolute; left:50%; margin-left:-55px;"><span style="margin-right:20px; margin-bottom:20px;">'+result.users["price"][0]+' ед. </span><input type="button" name="open_case_button" value="Открыть" onClick="var select_id_case ='+select_id_case+';open_case_function();"></div>';
-						
 						return res;
 					});
 					console.log(result);
@@ -156,7 +151,6 @@ function select_case(){
 							res += '<img src="'+result.users["img"][i]+'" width="100px"/>';
 							res += '<h3 style="height:75px;">'+result.users["name"][i]+'</h3></div>';
 						}
-						
 						res += '</div>';
 						return res;
 					});
@@ -201,21 +195,6 @@ function sell_skin_function(){
 		socket.send(JSON.stringify(message));
 		return false;
 }
-/*function info_account_function(){
-	var message = {
-			username: "qwerty",
-			password: "123",
-			currency: 0,
-			id_skins: "",
-			mode: "info",
-			select_id_case: 1,
-			select_id_skin: 1,
-			output: 1,
-			message: 1
-		}
-		socket.send(JSON.stringify(message));
-		return false;
-}*/
 </script>
 </head>
 <body>
@@ -251,7 +230,6 @@ function sell_skin_function(){
 </div>
 <script>
 window.onload = function(){
-	//var socket = new WebSocket("ws://echo.websocket.org");
 	
 	// достаем данные пользователя 
 	var split_url = decodeURIComponent(location.search.substr(1)).split('?');
@@ -280,9 +258,9 @@ window.onload = function(){
 	
 	// получение данных
 	socket.onmessage = function(){
-		//status.innerHTML = "Пришли данные" + event.data;
 		var message = JSON.parse(event.data);
 		console.log(message);
+		
 		// код ошибки
 		// 1 - нет такого пользователя
 		// 2 - не достаточно средств на счету
@@ -290,9 +268,9 @@ window.onload = function(){
 		// 4 - кейс открыт
 		// 5 - товар продан
 		// 6 - состояние счета и какие есть выигранные предметы
+		
 		if(message.output == 1){ // пользователя с такими данными не существует
 			alert("Пользователя с такими данными не существует!");
-			// window.location.reload();
 		}
 		else if(message.output == 2){ // недостаточно средств на счету
 			alert(message.message);
@@ -301,8 +279,6 @@ window.onload = function(){
 			alert(message.message);
 		}
 		else if(message.output == 4){ // кейс открыт
-			// сделать анимацию прокрутки
-			// закрыть анимацию и вызвать через функцию то что ниже
 			jQuery.ajax({
             url: "for_db.php",
             type: "POST",
