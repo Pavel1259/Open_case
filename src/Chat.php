@@ -2,13 +2,15 @@
 namespace MyApp;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
+use Mysql;
 //библиотека Ratchet и вебсокеты
 // как const сделать глобальным, если е его вызываю из функции
 class Chat implements MessageComponentInterface {
     protected $clients;
-	protected $db_database;
+	protected $db_database = "online_store";
 	protected $mysqli;
 	public $link;
+	
 	
     public function __construct() {
         $this->clients = new \SplObjectStorage; // хранилище с клиентами
@@ -29,6 +31,11 @@ class Chat implements MessageComponentInterface {
 
 	// обработка
     public function onMessage(ConnectionInterface $from, $msg) {
+		
+		$mysqli = new \mysqli('localhost', 'pasha', '643105', $db_database);
+		if ($mysqli->connect_errno) {
+			echo "Не удалось подключиться к MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+		}
         $numRecv = count($this->clients) - 1;
 		// как происходит отправка сообщения нас уведомляют
         echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"

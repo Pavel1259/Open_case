@@ -38,7 +38,7 @@ function close_banner_get_skin(){
 }
 function update_info_person()
 {
-	var user_data = new_name_user + ',' + new_password_user;
+var user_data = new_name_user + ',' + new_password_user;
 						
 	jQuery.ajax({
             url: "for_db.php",
@@ -126,6 +126,8 @@ function select_case(){
 						return res;
 					});
 					console.log(result);
+					
+					
                 }else{
                     alert(result.message);
                 }
